@@ -465,7 +465,7 @@ body, .section-sand, .clients, .section-cream, .service, form, .result, .top { b
         <p class="hero-text">Captação de vídeos e social media para a sua empresa.</p>
         <form class="hero-form" id="heroForm" novalidate>
           <input id="heroNome" name="heroNome" aria-label="Seu nome" placeholder="Seu nome" autocomplete="name">
-          <input id="heroContato" name="heroContato" aria-label="Seu WhatsApp" placeholder="Seu WhatsApp" autocomplete="tel" inputmode="tel">
+          <input id="heroNicho" name="heroNicho" aria-label="Seu nicho" placeholder="Seu nicho (ex.: restaurante)" autocomplete="off">
           <button class="btn btn-wine" type="submit">Quero ser atendido</button>
         </form>
       </div>
@@ -859,10 +859,10 @@ var WHATSAPP = "5512991859217";
   document.getElementById("heroForm").addEventListener("submit", function (event) {
     event.preventDefault();
     var heroNome = document.getElementById("heroNome");
-    var heroContato = document.getElementById("heroContato");
+    var heroNicho = document.getElementById("heroNicho");
     if (!heroNome.value.trim()) { heroNome.focus(); return; }
-    if (!heroContato.value.trim()) { heroContato.focus(); return; }
-    abrirWhatsApp(linkWhatsApp("Olá, Agência FBK3! Meu nome é " + heroNome.value.trim() + " e quero ser atendido.\nMeu WhatsApp: " + heroContato.value.trim()));
+    if (!heroNicho.value.trim()) { heroNicho.focus(); return; }
+    abrirWhatsApp(linkWhatsApp("Olá, Agência FBK3! Meu nome é " + heroNome.value.trim() + " e quero ser atendido.\nMeu nicho: " + heroNicho.value.trim()));
   });
 
   // Formulário

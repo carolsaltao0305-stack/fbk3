@@ -628,12 +628,12 @@ body, .section-sand, .clients, .section-cream, .service, form, .result, .top { b
           <div class="field"><label for="retorno">WhatsApp ou e-mail</label><input id="retorno" name="retorno" required></div>
           <div class="field"><label for="mensagem">Mensagem</label><textarea id="mensagem" name="mensagem"></textarea></div>
           <p class="form-error" id="formError" role="alert" hidden></p>
-          <button class="btn btn-wine" type="submit">Preparar mensagem</button>
+          <button class="btn btn-wine" type="submit">Enviar pelo WhatsApp</button>
         </form>
         <div class="result" id="result" hidden>
-          <h3>Sua mensagem está pronta</h3>
-          <pre id="resultText" tabindex="0"></pre>
-          <button class="btn btn-wine" type="button" id="copyBtn">Copiar mensagem</button>
+          <h3>Continue a conversa no WhatsApp</h3>
+          <p>Abrimos o WhatsApp com a sua mensagem pronta. Se ele não abriu, toque no botão abaixo.</p>
+          <a class="btn btn-wine" id="waLink" href="https://wa.me/5512991859217" target="_blank" rel="noopener">Abrir o WhatsApp</a>
           <button class="linkish" type="button" id="editBtn">Voltar e editar</button>
         </div>
       </div>
@@ -704,7 +704,8 @@ body, .section-sand, .clients, .section-cream, .service, form, .result, .top { b
 
 <script>
 // Preencha aqui os contatos reais da agência.
-var CONTATO = { WhatsApp: "", "E-mail": "", Instagram: "" };
+var CONTATO = { WhatsApp: "(12) 99185-9217", "E-mail": "", Instagram: "" };
+var WHATSAPP = "5512991859217";
 
 (function () {
   var root = document.documentElement;
@@ -719,7 +720,16 @@ var CONTATO = { WhatsApp: "", "E-mail": "", Instagram: "" };
     var dt = document.createElement("dt");
     var dd = document.createElement("dd");
     dt.textContent = name;
-    dd.textContent = CONTATO[name];
+    if (name === "WhatsApp") {
+      var link = document.createElement("a");
+      link.href = "https://wa.me/" + WHATSAPP;
+      link.target = "_blank";
+      link.rel = "noopener";
+      link.textContent = CONTATO[name];
+      dd.appendChild(link);
+    } else {
+      dd.textContent = CONTATO[name];
+    }
     row.appendChild(dt);
     row.appendChild(dd);
     channels.appendChild(row);
@@ -837,26 +847,29 @@ var CONTATO = { WhatsApp: "", "E-mail": "", Instagram: "" };
   policy.addEventListener("close", function () { if (lenis) lenis.start(); });
   if (location.hash === "#privacidade") openPolicy();
 
-  // Abertura: leva os dados para o formulário de contato
+  // WhatsApp: abre a conversa com a mensagem pronta
+  function linkWhatsApp(texto) {
+    return "https://wa.me/" + WHATSAPP + "?text=" + encodeURIComponent(texto);
+  }
+  function abrirWhatsApp(url) {
+    window.open(url, "_blank", "noopener");
+  }
+
+  // Abertura: abre o WhatsApp direto
   document.getElementById("heroForm").addEventListener("submit", function (event) {
     event.preventDefault();
     var heroNome = document.getElementById("heroNome");
     var heroContato = document.getElementById("heroContato");
     if (!heroNome.value.trim()) { heroNome.focus(); return; }
     if (!heroContato.value.trim()) { heroContato.focus(); return; }
-    document.getElementById("nome").value = heroNome.value.trim();
-    document.getElementById("retorno").value = heroContato.value.trim();
-    var contato = document.getElementById("contato");
-    if (lenis) lenis.scrollTo(contato); else contato.scrollIntoView();
-    document.getElementById("mensagem").focus({ preventScroll: true });
+    abrirWhatsApp(linkWhatsApp("Olá, Agência FBK3! Meu nome é " + heroNome.value.trim() + " e quero ser atendido.\nMeu WhatsApp: " + heroContato.value.trim()));
   });
 
   // Formulário
   var form = document.getElementById("leadForm");
   var result = document.getElementById("result");
-  var resultText = document.getElementById("resultText");
   var formError = document.getElementById("formError");
-  var copyBtn = document.getElementById("copyBtn");
+  var waLink = document.getElementById("waLink");
 
   form.addEventListener("submit", function (event) {
     event.preventDefault();
@@ -872,27 +885,13 @@ var CONTATO = { WhatsApp: "", "E-mail": "", Instagram: "" };
     var lines = ["Olá, Agência FBK3! Meu nome é " + nome + "."];
     if (form.mensagem.value.trim()) lines.push(form.mensagem.value.trim());
     lines.push("Contato para retorno: " + retorno);
-    resultText.textContent = lines.join("\n");
-    copyBtn.textContent = "Copiar mensagem";
+    var url = linkWhatsApp(lines.join("\n"));
+    waLink.href = url;
+    abrirWhatsApp(url);
     form.hidden = true;
     result.hidden = false;
     result.querySelector("h3").setAttribute("tabindex", "-1");
     result.querySelector("h3").focus();
-  });
-
-  copyBtn.addEventListener("click", function () {
-    function selectText() {
-      var range = document.createRange();
-      range.selectNodeContents(resultText);
-      var selection = window.getSelection();
-      selection.removeAllRanges();
-      selection.addRange(range);
-      copyBtn.textContent = "Texto selecionado: use Ctrl+C";
-    }
-    if (!navigator.clipboard) { selectText(); return; }
-    navigator.clipboard.writeText(resultText.textContent).then(function () {
-      copyBtn.textContent = "Mensagem copiada";
-    }, selectText);
   });
 
   document.getElementById("editBtn").addEventListener("click", function () {

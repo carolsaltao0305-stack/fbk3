@@ -625,7 +625,7 @@ body, .section-sand, .clients, .section-cream, .service, form, .result, .top { b
       <div>
         <form id="leadForm" novalidate>
           <div class="field"><label for="nome">Nome</label><input id="nome" name="nome" autocomplete="name" required></div>
-          <div class="field"><label for="retorno">WhatsApp ou e-mail</label><input id="retorno" name="retorno" required></div>
+          <div class="field"><label for="nicho">Seu nicho</label><input id="nicho" name="nicho" placeholder="ex.: restaurante" autocomplete="off" required></div>
           <div class="field"><label for="mensagem">Mensagem</label><textarea id="mensagem" name="mensagem"></textarea></div>
           <p class="form-error" id="formError" role="alert" hidden></p>
           <button class="btn btn-wine" type="submit">Enviar pelo WhatsApp</button>
@@ -874,17 +874,16 @@ var WHATSAPP = "5512991859217";
   form.addEventListener("submit", function (event) {
     event.preventDefault();
     var nome = form.nome.value.trim();
-    var retorno = form.retorno.value.trim();
-    if (!nome || !retorno) {
-      formError.textContent = "Informe o seu nome e um WhatsApp ou e-mail para retorno.";
+    var nicho = form.nicho.value.trim();
+    if (!nome || !nicho) {
+      formError.textContent = "Informe o seu nome e o seu nicho.";
       formError.hidden = false;
-      (nome ? form.retorno : form.nome).focus();
+      (nome ? form.nicho : form.nome).focus();
       return;
     }
     formError.hidden = true;
-    var lines = ["Olá, Agência FBK3! Meu nome é " + nome + "."];
+    var lines = ["Olá, Agência FBK3! Meu nome é " + nome + ".", "Meu nicho: " + nicho];
     if (form.mensagem.value.trim()) lines.push(form.mensagem.value.trim());
-    lines.push("Contato para retorno: " + retorno);
     var url = linkWhatsApp(lines.join("\n"));
     waLink.href = url;
     abrirWhatsApp(url);
